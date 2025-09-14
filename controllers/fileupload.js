@@ -79,21 +79,15 @@ async function uploadFileToCloudinary(file, folder,quality){
 
          // file uplaod to cloudinary
          const  response = await uploadFileToCloudinary(file ,"DJ" );
-        console.log("Response from cloudinary -> ", response);
-        res.json({
-            success: true,
-            message: "Image uploaded successfully",
-            data: response
-        })
-        
-        // db me save karna hai
-        const fileData = await File.create({
+
+         // db me save karna hai
+         const fileData = await File.create({
             name,
             imageUrl : response.secure_url,
-            tags : tags.split(','),
+            tags : tags ? tags.split(',') : [],
             email
         });
-        console.log("File data -> ", fileData);
+
         res.status(201).json({
             success: true,
             message: "File data saved successfully",
@@ -120,17 +114,13 @@ async function uploadFileToCloudinary(file, folder,quality){
     try{
          //data fetch
             const {name, tags , email} = req.body;
-            console.log(name, tags, email);
 
             //video file fetch
-            const file = req.files.videoFile; 
-            console.log(file);
+            const file = req.files.videoFile;
 
             //validation
             const supportedTypes = ['mp4','mp3','mkv', 'mov','avi'];
             const fileType = file.name.split('.')[1].toLowerCase();
-
-
 
             if(!isFileTypeSupported(fileType, supportedTypes)){
                 return res.status(400).json({
@@ -141,28 +131,20 @@ async function uploadFileToCloudinary(file, folder,quality){
 
             // file upllaod to cloudinary
             const  response = await uploadFileToCloudinary(file ,"DJ", 300, "auto" );
-            console.log("Response from cloudinary -> ", response);
-            res.json({
-                success: true,
-                message: "Video uploaded successfully",
-                data: response
-            })
 
             // db me save karna hai
             const fileData = await File.create({
                 name,
                 videoUrl : response.secure_url,
-                tags : tags.split(','),
+                tags : tags ? tags.split(',') : [],
                 email
             });
-            console.log("File data -> ", fileData);
+
             res.status(201).json({
                 success: true,
                 message: "File data saved successfully",
                 videoUrl : response.secure_url,
             })
-
-
 
     }
     catch(err){
